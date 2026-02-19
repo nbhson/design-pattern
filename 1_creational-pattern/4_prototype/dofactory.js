@@ -1,3 +1,4 @@
+// ES5: Manual Cloning Interface
 function CustomerPrototype(proto) {
   this.proto = proto;
 
