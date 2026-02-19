@@ -1,3 +1,4 @@
+// ES5: Function Constructor Pattern
 function Employee(name) {
   this.name = name;
   this.say = function () {
