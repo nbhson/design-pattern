@@ -1,3 +1,4 @@
+// ES5: IIFE & Closure Pattern
 const Singleton = (function () {
   let instance;
 
@@ -7,7 +8,7 @@ const Singleton = (function () {
   }
 
   return {
-     getInstance: function() {
+    getInstance: function () {
       if (!instance) {
         instance = createInstance();
       }

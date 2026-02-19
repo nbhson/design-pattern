@@ -27,3 +27,5 @@
 ## 23 mẫu design pattern
 
 ![anonyStick](design-patterns.png)
+
+<https://refactoring.guru/design-patterns/behavioral-patterns>
