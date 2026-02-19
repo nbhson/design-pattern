@@ -39,4 +39,3 @@ const carBuilder = new CarBuilder();
 const car = shop.construct(carBuilder);
 
 car.say();
-truck.say();
