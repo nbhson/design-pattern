@@ -1,3 +1,4 @@
+// ES5: Function Constructor Pattern
 const FullTime = function () {
   this.hourly = "$12";
 };
@@ -33,7 +34,7 @@ const Factory = function () {
   };
 };
 
-const factory = new Factory(); 
+const factory = new Factory();
 const employees = [];
 
 employees.push(factory.createEmployee("fulltime"));

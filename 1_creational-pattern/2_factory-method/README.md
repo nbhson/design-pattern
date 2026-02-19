@@ -2,93 +2,67 @@
 
 > Nhiệm vụ chính của `Factory Method` là tạo ra đối tượng mà không phải chỉ định cụ thể lớp (class) của đối tượng đó.
 
-## Using Factory Method
+## 1. Using Factory Method
 
 - Mục tiêu chính của `Factory Method` là khả năng mở rộng.
 - `Factory Method` cho phép bạn tạo ra đối tượng **một cách động** dựa trên các điều kiện, ngữ cảnh hoặc thông tin khác mà bạn có.
 - Thay vì việc khởi tạo đối tượng bằng cách sử dụng trực tiếp từ khóa **"new"** để tạo một thể hiện của lớp cụ thể, bạn tạo ra một phương thức (gọi là Factory Method) trong một interface hoặc lớp cơ sở. Các lớp con sẽ triển khai Factory Method này để tạo ra các đối tượng cụ thể.
-- Các ưu điểm của Factory Method pattern bao gồm:
 
-## Advantages
+## 2. Implementation Ways
 
-- Tách biệt mã tạo đối tượng và mã sử dụng đối tượng, giúp dễ dàng mở rộng và bảo trì mã.
-- Cho phép bạn thay đổi cách tạo đối tượng mà không cần sửa đổi mã sử dụng đối tượng.
-- Factory Method giúp giảm sự phụ thuộc vào các lớp cụ thể của đối tượng trong mã nguồn của bạn, giúp mã nguồn dễ dàng bảo trì và mở rộng.
+### Cách 1: ES5 (Function Constructor) - [dofactory.js](./dofactory.js)
 
-## Diagram
-
-![javascript-factory-method](javascript-factory-method.jpg);
-
-## Participants
-
-**Creator** (`Factory`)
-
-- the 'factory' object that creates new products
-- implements 'factoryMethod' which returns newly created products
-
-**AbstractProduct** (not used in JavaScript)
-
-- declares an interface for products
-
-**ConcreteProduct**
-
-- the product being created
-- all products support the same interface (properties and methods)
+Cách cổ điển sử dụng function constructor để định nghĩa "class" và method.
 
 ```js
-var Factory = function () {
+const Factory = function () {
   this.createEmployee = function (type) {
-    var employee;
-
+    let employee;
     if (type === "fulltime") {
       employee = new FullTime();
-    } else if (type === "parttime") {
-      employee = new PartTime();
-    } else if (type === "temporary") {
-      employee = new Temporary();
-    } else if (type === "contractor") {
-      employee = new Contractor();
-    }
-
-    employee.type = type;
-
-    employee.say = function () {
-      console.log(this.type + ": rate " + this.hourly + "/hour");
-    };
-
+    } 
+    // ...
     return employee;
   };
 };
+```
 
-var FullTime = function () {
-  this.hourly = "$12";
-};
+### Cách 2: ES6 Class - [es6-class.js](./es6-class.js)
 
-var PartTime = function () {
-  this.hourly = "$11";
-};
+Cách hiện đại sử dụng `class` và `extends` để quản lý kế thừa rõ ràng hơn.
 
-var Temporary = function () {
-  this.hourly = "$10";
-};
-
-var Contractor = function () {
-  this.hourly = "$15";
-};
-
-function run() {
-  var employees = [];
-  var factory = new Factory();
-
-  employees.push(factory.createEmployee("fulltime"));
-  employees.push(factory.createEmployee("parttime"));
-  employees.push(factory.createEmployee("temporary"));
-  employees.push(factory.createEmployee("contractor"));
-
-  for (var i = 0, len = employees.length; i < len; i++) {
-    employees[i].say();
+```js
+class EmployeeFactory {
+  createEmployee(type, name) {
+    switch (type) {
+      case "fulltime":
+        return new FullTime(name);
+      // ...
+    }
   }
 }
 ```
 
-> `Factory Method` pattern thường được sử dụng trong các tình huống khi bạn muốn để lại việc tạo đối tượng cho các lớp con hoặc khi bạn không biết chính xác loại đối tượng nào cần được tạo tại thời điểm biên dịch mà muốn quyết định tại thời điểm chạy.
+## 3. Khi nào dùng & Khi nào tránh
+
+### ✅ Advantages (Ưu điểm)
+- **Decoupling (Giảm sự phụ thuộc):** Client code không cần biết về các lớp cụ thể (ConcreteProduct), chỉ cần làm việc với Factory và Interface chung.
+- **Single Responsibility Principle:** Code tạo object tập trung ở một nơi, dễ bảo trì.
+- **Open/Closed Principle:** Dễ dàng thêm loại sản phẩm mới mà không cần sửa code cũ của client.
+
+### ❌ Disadvantages (Nhược điểm)
+- **Complexity:** Code có thể trở nên phức tạp hơn vì phải tạo thêm nhiều subclass con.
+
+## 4. Diagram
+
+![javascript-factory-method](javascript-factory-method.jpg);
+
+## 5. Participants
+
+**Creator** (`Factory`)
+- Đối tượng 'factory' tạo ra sản phẩm mới.
+- Cài đặt 'factoryMethod' trả về sản phẩm mới được tạo.
+
+**ConcreteProduct** (`FullTime`, `PartTime`...)
+- Sản phẩm cụ thể được tạo ra.
+- Tất cả sản phẩm hỗ trợ cùng một interface (thuộc tính và phương thức).
