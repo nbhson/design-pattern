@@ -1,78 +1,52 @@
-# Façade Pattern
+# JavaScript Façade Pattern
 
-> A single class that represents an entire subsystem
+> **Façade Pattern** (Mặt tiền) đóng vai trò như một giao diện duy nhất, cung cấp lối tiếp cận đơn giản để che giấu đi sự phức tạp của một hoặc nhiều hệ thống con (Subsystems) bên dưới bên dưới.
 
-- Façade cung cấp giao diện bảo vệ máy khách khỏi chức năng phức tạp trong một hoặc nhiều hệ thống con. 
-- Đó là một simple pattern có vẻ tầm thường nhưng nó rất mạnh mẽ và cực kỳ hữu ích. 
-- Nó thường hiện diện trong các hệ thống được xây dựng xung quanh kiến ​​trúc nhiều lớp.
+- Nó cung cấp một cái nhìn đơn giản (simple view) cho Client thay vì phải tương tác với hàng chục class/hàm lằng nhằng.
+- Rất phổ biến trong kiến trúc phần mềm, đặc biệt là khi làm việc với API hoăc các thư viện phức tạp.
 
-> Phía sau một hệ thống phức tạp, là một giao diện đơn giản cho người dùng
+## 1. Using Façade
 
-## Diagram
+- **Che giấu độ phức tạp**: Rút gọn các thao tác lặp đi lặp lại hoặc các luồng quy trình nghiệp vụ cần gọi qua nhiều bước khác nhau.
+- **Giảm sự phụ thuộc (Coupling)**: Client chỉ biết đến Facade class chứ không cần quan tâm Subsystem nào đang chạy. Nhờ vậy nếu Subsystem thay đổi (ví dụ thay đổi thư viện mã hoá hay đổi hệ cở sở dữ liệu), Client không bị ảnh hưởng.
+
+### Khi nào dùng? (When to use)
+- Khi bạn cần tạo một "lối vào" (entry point) đơn giản để làm việc với một hệ thống khổng lồ và phức tạp.
+- Khi muốn tổ chức lại hệ thống thành các layer (tầng). Facade sẽ là "cánh cửa" giao tiếp giữa các layer.
+
+## 2. Implementation Ways
+
+### Cách 1: ES5 / Simplified Class - [dofactory.js](./dofactory.js)
+
+Một ví dụ phổ biến trên thương mại điện tử: Tính toán tổng giá tiền sau khi áp mã giảm giá `Discount`, cộng thêm `Fees` thuế, và `Shipping` phí vận chuyển. Thay vì client gọi 3 hàm độc lập, `ShopPattern` làm nhiệm vụ đó.
+
+### Cách 2: ES6 Modern Class - [es6-class.js](./es6-class.js)
+
+Một ví dụ kinh điển về Duyệt Khoản Vay Thế Chấp (Mortgage). Khách hàng (Client) đến quầy nhờ vay tiền. Nhân viên (Facade) sẽ đứng ra làm các nghiệp vụ:
+- Hỏi Ngân Hàng (`Bank`) kiểm tra số dư.
+- Hỏi Tín Dụng (`Credit`) kiểm tra lịch sử nợ xấu.
+- Hỏi Hồ sơ lý lịch (`Background`) xem có tiền án không.
+-> Khách hàng chỉ cần gọi hàm `applyFor(amount)` qua Facade và đợi kết quả, không cần tự tay đi 3 phòng ban trên.
+
+## 3. Pros & Cons
+
+### ✅ Advantages (Ưu điểm)
+- **Dễ sử dụng (Easy to Use)**: Đơn giản hóa giao diện của các thư viện/framework lớn.
+- **Tách biệt code (Decoupling)**: Cô lập mã logic kinh doanh của ứng dụng khỏi sự phức tạp của dịch vụ subsystem.
+
+### ❌ Disadvantages (Nhược điểm)
+- **God Object**: Nếu không cẩn thận và lạm dụng, Facade có thể biến thành một lớp `God Object` (Lớp thần thánh, ôm đồm mọi chức năng) khiến nó lớn đến mức không thể quản lý được và vi phạm nguyên tắc "Single Responsibility".
+
+## 4. Diagram
 
 ![javascript-facade.jpg](javascript-facade.jpg)
 
-## Participants
+## 5. Participants
 
-Façade -- In example code: `Mortgage`
-- knows which subsystems are responsible for a request
-- delegates client requests to appropriate subsystem objects
+**Façade** (`MortgageFacade`, `ShopPattern`)
+- Đứng ra nhận yêu cầu từ Client và chuyển hướng yêu cầu tới các hệ thống con bên dưới xử lý.
+- Biết chính xác hệ thống con nào chịu trách nhiệm cho việc gì.
 
-Sub Systems -- In example code: `Bank`, `Credit`, `Background`
-- implements and performs specialized subsystem functionality
-- have no knowledge of or reference to the façade
-
-## Using Façade
-
-- Mục đích của Façade là cung cấp giao diện cấp cao (thuộc tính và phương thức) giúp hệ thống con hoặc bộ công cụ dễ sử dụng cho khách hàng.
-
-```js
-var Mortgage = function (name) {
-    this.name = name;
-}
-
-Mortgage.prototype = {
-
-    applyFor: function (amount) {
-        // access multiple subsystems...
-        var result = "approved";
-        if (!new Bank().verify(this.name, amount)) {
-            result = "denied";
-        } else if (!new Credit().get(this.name)) {
-            result = "denied";
-        } else if (!new Background().check(this.name)) {
-            result = "denied";
-        }
-        return this.name + " has been " + result +
-            " for a " + amount + " mortgage";
-    }
-}
-
-var Bank = function () {
-    this.verify = function (name, amount) {
-        // complex logic ...
-        return true;
-    }
-}
-
-var Credit = function () {
-    this.get = function (name) {
-        // complex logic ...
-        return true;
-    }
-}
-
-var Background = function () {
-    this.check = function (name) {
-        // complex logic ...
-        return true;
-    }
-}
-
-function run() {
-    var mortgage = new Mortgage("Joan Templeton");
-    var result = mortgage.applyFor("$100,000");
-
-    console.log(result);
-}
-```
+**Sub Systems** (`Bank`, `Credit`, `Background`, `Discount`...)
+- Cung cấp các chức năng chuyên biệt.
+- Không biết hoặc không có tham chiếu ngược lại với `Façade`.

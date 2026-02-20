@@ -1,3 +1,4 @@
+// ES5 Implementation
 class Discount {
   calc(value) {
     return value * 0.9;
@@ -34,7 +35,7 @@ class ShopPattern {
 
     return price;
   }
-}  
+}
 
 function buy(price) {
   const shop = new ShopPattern();

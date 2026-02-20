@@ -1,3 +1,5 @@
+// ES6: Native JS Proxy Pattern
+// Sử dụng API Proxy có sẵn của JavaScript để theo dõi (Trap) và can thiệp (Intercept) vào object.
 const proxyHandler = {
   get: (obj, prop) => {
     if (!obj[prop]) {

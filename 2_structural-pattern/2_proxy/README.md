@@ -7,7 +7,17 @@
 
 ![Proxy](./JavaScript-Proxy.png)
 
-## Reactivity
+## 1. Implementation Ways
+
+### Cách 1: ES5 Structural Proxy - [dofactory.js](./dofactory.js)
+Một Proxy Cổ điển (Classic Object-Oriented Proxy) tạo ra một lớp bọc xung quanh "Real Subject". Code ví dụ `dofactory.js` trình bày một **Caching Proxy**, tự tạo bộ nhớ đệm (cache) cho kết quả của `GeoCoder` để giảm thời gian xử lý khi request trùng nấp.
+
+### Cách 2: ES6 Native JS `Proxy` - [es6-proxy.js](./es6-proxy.js)
+Trong ES6, Javascript cung cấp sẵn class `Proxy` chuyên dụng, cho phép bạn đánh chặn (intercept) và định nghĩa lại các hoạt động cơ bản đối với một object đó (ví dụ: property lookup, assignment, enumeration).
+
+---
+
+## 2. Reactivity
 
 - `Reactivity` (tạm dịch là tính phản ứng) là khả năng của một ứng dụng hoặc framework để theo dõi và phản ứng lại các thay đổi trong dữ liệu và tự động cập nhật giao diện người dùng để phản ánh các thay đổi đó. Điều này đặc biệt hữu ích trong việc xây dựng các ứng dụng động, nơi dữ liệu thay đổi liên tục.
 
