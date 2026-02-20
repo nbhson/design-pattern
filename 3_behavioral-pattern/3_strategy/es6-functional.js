@@ -1,11 +1,13 @@
+// ES6: Functional Strategy Pattern (Javascript-idiomatic)
+// Bằng cách map các Function vào một Object Literal, thay vì dùng switch-case hoặc if-else.
 function preOrderPrice(originalPrice) {
     return originalPrice * 0.2;
 }
 function promotionPrice(originalPrice) {
-    return originalPrice <= 200 ?  originalPrice * 0.1 : originalPrice - 30;
+    return originalPrice <= 200 ? originalPrice * 0.1 : originalPrice - 30;
 }
 function blackFridayPrice(originalPrice) {
-    return originalPrice <= 200 ?  originalPrice * 0.2 : originalPrice - 50;
+    return originalPrice <= 200 ? originalPrice * 0.2 : originalPrice - 50;
 }
 function defaultPrice(originalPrice) {
     return originalPrice;
@@ -40,4 +42,4 @@ function getPrice(originalPrice, typePromotion) {
     return getPriceStrategies[typePromotion](originalPrice);
 }
 
-console.log('-->>>',  getPrice(200,  'blackFriday'))
+console.log('-->>>', getPrice(200, 'blackFriday'))

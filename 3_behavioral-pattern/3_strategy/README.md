@@ -1,66 +1,39 @@
-# Strategy Pattern
+# JavaScript Strategy Pattern
 
-> Encapsulates an algorithm inside a class
+> **Strategy Pattern** (Mẫu chiến lược) đóng gói một họ (family) các thuật toán/hành vi có chung mục đích vào bên trong các lớp riêng biệt. Điều này cho phép client lựa chọn chiến lược phù hợp vào thời gian chạy (runtime) và làm cho các thuật toán có thể **thay thế cho nhau** mà không vi phạm cấu trúc tĩnh cũ.
 
-- `Strategy Pattern` (Mẫu chiến lược) là một mẫu thiết kế trong lập trình hướng đối tượng (Object-Oriented Programming - OOP).
+Nói một cách đơn giản: Thay vì dùng 1 đống lệnh `if...else if` khổng lồ trong 1 hàm duy nhất, chúng ta tách mỗi khối `if` thành 1 hàm (hoặc 1 object/class) xử lý độc lập.
 
-- Mục đích của nó là cho phép bạn xác định một loạt các thuật toán hoặc chiến lược khác nhau và làm cho chúng có thể `thay thế cho nhau` mà `không cần thay đổi cấu trúc` của lớp chứa chúng.
+## 1. Using Strategy (Khi nào dùng)
+- **Thay thế cho mớ hỗn độn 100 dòng If-Else**: Mọi khối điều kiện rắc rối trong một hàm (ví dụ code tính khuyến mãi ngày Tết, Quốc khánh, Black Friday, No-sale) nên được uỷ quyền (delegate) về cho các "chiến lược" xử lý tương ứng.
+- **Tuân thủ quy tắc Đóng/Mở (Open/Closed)**: Bạn có thể thêm hàng trăm chương trình khuyến mãi/phương thức thanh toán mới mà tuyệt đối **không được sửa** vào hàm tính tiền / object Checkout hiện tại. Tránh nguy cơ làm hỏng logic hiện đang chạy tốt.
 
-> Điều này giúp giảm thiểu sự phụ thuộc giữa các lớp và tạo ra sự linh hoạt trong việc chọn các chiến lược thích hợp cho một tình huống cụ thể.
+## 2. Implementation Ways
 
-## Diagram
+### Cách 0: Anti-pattern - [anti-pattern.js](./anti-pattern.js)
+Ví dụ minh hoạ cách code "thông thường". Một hàm chứa nhiều dòng `if`. Vi phạm nghiêm trọng nguyên tắc **Single Responsibility Principle (Trách nhiệm duy nhất)**. Mỗi lần tạo chương trình Sale mới, Dev lại phải chui vào đây sửa logic hàm. 
 
-![javascript-strategy](javascript-strategy.jpg);
+### Cách 1: ES6 Functional (Bản chất JS) - [es6-functional.js](./es6-functional.js)
+Đây là cách code Strategy "Javascript-idiomatic" nhất. Chẳng cần tạo Class lằng nhằng, chúng ta tận dụng Object Literal Map.
+- Map một key là Enum/Tên gói chiến lược, Value là hàm của nó.
+- Truy xuất hằng số thời gian `O(1)`: `strategies[strategyName](...)`. Rất gọn gàng và hiệu suất cao.
 
-## Using Strategy
+### Cách 2: ES6 Object-Oriented - [es6-class.js](./es6-class.js)
+Cách code chuẩn OOP Gang of Four.
+Phù hợp với các hệ thống đồ sộ như API xử lý thanh toán (CreditCard, Paypal). Các chiến lược giờ đây là các Class chứa nhiều logic phức tạp, state riêng và triển khai một Interface (hàm `pay(amount)`). 
+- Context (`ShoppingCart`) chỉ cần nhận abstract strategy từ bên ngoài truyền vào thông qua Dependency Injection. ShoppingCart vô tư `checkout()` mà không cần quan tâm user đang xài ví điện tử nào.
 
-```JS
-// Bước 1: Tạo các chiến lược (các strategies)
-class PayByCreditCard {
-  pay(amount) {
-    console.log(`Paid $${amount} by credit card`);
-  }
-}
+## 3. Pros & Cons
 
-class PayByPayPal {
-  pay(amount) {
-    console.log(`Paid $${amount} by PayPal`);
-  }
-}
+### ✅ Advantages (Ưu điểm)
+- **Tránh Code Bẩn**: Sạch bóng Code if-else / switch-case.
+- **Tăng tính tái sử dụng**: Bất kỳ chỗ nào cũng có thể cắm 1 chiến lược vào miễn là truyền cùng Interface thay vì copy code logic.
+- **Tách riêng sự biến động**: Context không bị phình to (ví dụ ShoppingCart luôn đơn giản bất kể có trăm ngàn ví kết nối).
 
-class PayByCash {
-  pay(amount) {
-    console.log(`Paid $${amount} in cash`);
-  }
-}
+### ❌ Disadvantages (Nhược điểm)
+- **Gia tăng sự phức tạp nhẹ**: Tăng số file/function do mỗi Strategy bóc lẻ ra.
+- **Client phải hiểu ý nghĩa chiến lược**: Client (hoặc Router) là đứa gửi Request phải xác định chính xác nó đang cần dùng `Strategy` nào để truyền vào tham số cài đặt.
 
-// Bước 2: Tạo lớp chứa chiến lược và sử dụng nó (Context)
-class ShoppingCart {
-  constructor(paymentStrategy) {
-    this.paymentStrategy = paymentStrategy;
-    this.items = [];
-  }
+## 4. Diagram
 
-  addItem(item) {
-    this.items.push(item);
-  }
-
-  calculateTotal() {
-    return this.items.reduce((total, item) => total + item.price, 0);
-  }
-
-  checkout() {
-    const totalAmount = this.calculateTotal();
-    this.paymentStrategy.pay(totalAmount);
-  }
-}
-
-// Bước 3: Sử dụng chiến lược
-const cart = new ShoppingCart(new PayByCreditCard());
-
-cart.addItem({ name: 'Item 1', price: 50 });
-cart.addItem({ name: 'Item 2', price: 30 });
-
-cart.checkout();
-```
-Trong ví dụ trên, chúng ta đã tạo ba chiến lược khác nhau để thanh toán (`PayByCreditCard`, `PayByPayPal` và `PayByCash`). Một đối tượng ShoppingCart có khả năng chọn một trong các chiến lược này để thanh toán đơn hàng. Điều này cho phép chúng ta thay đổi phương thức thanh toán mà không cần thay đổi mã nguồn của lớp ShoppingCart.
+![javascript-strategy](javascript-strategy.jpg)

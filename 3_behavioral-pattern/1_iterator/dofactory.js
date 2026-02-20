@@ -1,3 +1,4 @@
+// ES5: Classic Iterator Pattern (Before Native Support)
 var Iterator = function (items) {
   this.index = 0;
   this.items = items;

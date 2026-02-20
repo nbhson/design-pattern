@@ -6,11 +6,11 @@ function getPrice(originalPrice, typePromotion = 'default') {
 
     // Tiếp tục thêm tính năng khuyễn mãi thông thường, ví dụ Nếu giá gốc < 200 thì giảm 10%, còn > thì giảm tối đa 30
     if (typePromotion === "promotion") {
-        return origialPrice <= 200 ?  origialPrice * 0.1 : originalPrice - 30;
+        return originalPrice <= 200 ? originalPrice * 0.1 : originalPrice - 30;
     }
     // Đến ngày blackFriday promotion
     if (typePromotion === "blackFriday") {
-        return origialPrice <= 200 ?  origialPrice * 0.2 : originalPrice - 50;
+        return originalPrice <= 200 ? originalPrice * 0.2 : originalPrice - 50;
     }
 
     // Thời xưa chưa có marketing như bây giờ.
@@ -19,4 +19,4 @@ function getPrice(originalPrice, typePromotion = 'default') {
     }
 }
 
-console.log('-->>>',  getPrice(200,  'blackFriday'))
+console.log('-->>>', getPrice(200, 'blackFriday'))

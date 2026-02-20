@@ -1,15 +1,37 @@
-# Iterator Pattern
+# JavaScript Iterator Pattern
 
-> Iterator pattern cho phép người dùng lặp qua một tập hợp các đối tượng một cách hiệu quả.
+> **Iterator Pattern** cung cấp một cách tiêu chuẩn (nhất quán) để truy xuất (lặp qua) tuần tự các phần tử của một tập hợp đối tượng (danh sách, cây, đồ thị...) mà không để lộ thiết kế hay cấu trúc bên trong của tập hợp đó.
 
-## Using Iterator
+Iterator pattern giúp việc tách thuật toán duyệt phân tách khỏi cấu trúc dữ liệu vùng chứa.
 
-Điểm chung của lập trình thông thường là duyệt và thao tác một tập hợp các đối tượng. Các collections này có thể được lưu trữ dưới dạng một mảng hoặc có thể là một cái gì đó phức tạp hơn, chẳng hạn như cấu trúc cây hoặc đồ thị.
+## 1. Using Iterator (Khi nào dùng)
+- **Khi tập hợp phức tạp**: Nếu bạn có cấu trúc dữ liệu phức tạp (như Tree, Graph, Custom Object chứa nhiều mảng con), bạn không muốn code "duyệt qua nó" bị phơi bày khắp mọi nơi dưới dạng mớ lệnh rối rắm.
+- **Tính đa hình**: Bạn muốn dùng **một vòng lặp y hệt nhau** cho các kiểu tập hợp dữ liệu khác nhau (dùng chung một interface Iterator).
+- **Tránh sửa đổi code cũ**: Giúp cấu trúc vòng lặp không bị ràng buộc trực tiếp vào danh sách. Nếu sau này danh sách chuyển từ Array thành Map, Set, Graph, bạn không cần sửa tất cả các vòng lặp trong chương trình.
 
-Iterator pattern giải quyết vấn đề này bằng cách tách tập hợp các đối tượng khỏi việc truyền tải các đối tượng này bằng cách triển khai một trình lặp chuyên dụng (tách các thuật toán ra khỏi vùng chứa).
+## 2. Implementation Ways
 
-Ngày nay, nhiều ngôn ngữ đã tích hợp sẵn Iterators bằng cách hỗ trợ các cấu trúc kiểu 'for-each' và giao diện IEnumerable và IEnumerator. Tuy nhiên, JavaScript chỉ hỗ trợ lặp cơ bản dưới dạng câu lệnh for, for-in, while và do while.
+### Cách 1: ES5 Custom Iterator Object - [dofactory.js](./dofactory.js)
+Trong ES5 đổ về trước của Javascript không có Iterator riêng. Bạn phải tự viết một Object để lưu chỉ mục (`index`) và lộ ra các hàm như `next()`, `hasNext()` hoặc tự tạo hàm map/each tuỳ thích. Nó mô phỏng lại behavior của pattern.
 
-Iterator pattern cho phép các nhà phát triển JavaScript thiết kế các cấu trúc lặp linh hoạt và phức tạp hơn nhiều.
+### Cách 2: ES6 Native Iterators và Generators - [es6-iterator.js](./es6-iterator.js)
+Từ ES6+, JavaScript mang đến hỗ trợ Iterator Native mạnh mẽ, khiến pattern này biến thành "tính năng mặc định" của ngôn ngữ.
+
+- **`Symbol.iterator`**: Khi một Object có property đặc biệt này và trả về một Object có `next()`, Object đó nghiễm nhiên trở thành *Iterable* (có thể lặp qua bằng `for...of`).
+- **`Generators (function*)`**: Là cú pháp cực kỳ ngắn gọn và xịn xò để tạo ra Iterator trong JS. Thay vì phải tự theo dõi index thủ công trong code, bạn dùng từ khóa `yield` để tạm dừng hàm và trả về từng giá trị liên tục. Tự động trả về một Iterator hoàn chỉnh.
+
+## 3. Pros & Cons
+
+### ✅ Advantages (Ưu điểm)
+- **Single Responsibility**: Tách riêng chức năng lặp qua đối tượng ra một lớp riêng biệt. Code nhẹ nhàng hơn.
+- **Open/Closed**: Bạn có thể implement các loại Iterator mới (duyệt ngược, duyệt song song...) mà không chạm vào collection gốc.
+- Tự do lặp trên collection mà không cần quan tâm thuộc tính internal map, list hay set.
+
+### ❌ Disadvantages (Nhược điểm)
+- Áp dụng pattern này có thể hơi cồng kềnh quá mức (overkill) nếu chương trình chỉ đơn giản là gọi Array gốc.
+
+## 4. Diagram
 
 ![javascript-iterator.jpg](javascript-iterator.jpg)
+
+*Lưu ý: Mọi vòng lặp `for...of`, cách rải mảng `[...arr]`, cấu trúc Data `Set()`, `Map()` trong JS hiện nay đều được xây dựng trên Iterators.*
